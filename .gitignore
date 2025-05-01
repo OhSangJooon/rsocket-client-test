@@ -1,0 +1,12 @@
+# Node.js dependencies
+node_modules/
+
+# IntelliJ project files
+.idea/
+*.iml
+
+# Lockfile (선택: 공유 필요 없다면 제외)
+package-lock.json
+
+# macOS 시스템 파일
+.DS_Store
