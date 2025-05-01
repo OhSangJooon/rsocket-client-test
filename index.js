@@ -17,12 +17,12 @@ const CHANNEL = 'golf-first';
 const JWT_TOKEN = 'test';
 
 function getRandomLeaveSeconds() {
-    return Math.floor(Math.random() * (60 - 20 + 1)) + 20; // 최소 20초 ~ 60초
+    return Math.floor(Math.random() * (70 - 20 + 1)) + 20; // 20초~70초
 }
 
 function testClient(userId, i, onComplete) {
     const leaveAfter = getRandomLeaveSeconds();
-    const data = { memberId: userId, channel: CHANNEL };
+    const data = { memberId: userId, channel: CHANNEL, facilityId: "10000001", aptId: "11111001" };
 
     const authMetadataBuffer = encodeBearerAuthMetadata(JWT_TOKEN);
     const routeMetadataBuffer = encodeRoute(ROUTE);
@@ -39,8 +39,8 @@ function testClient(userId, i, onComplete) {
         setup: {
             dataMimeType: 'application/json',
             metadataMimeType: 'message/x.rsocket.composite-metadata.v0',
-            keepAlive: 30000,
-            lifetime: 90000,
+            keepAlive: 60000,
+            lifetime: 180000,
             payload: { data: null, metadata: setupMetadata },
             serializers: { data: JsonSerializer, metadata: IdentitySerializer },
         },
@@ -57,11 +57,11 @@ function testClient(userId, i, onComplete) {
                 onSubscribe: s => s.request(2147483647),
                 onNext: payload => {
                     const payloadData = JSON.parse(payload.data.toString('utf8'));
-                    console.log(`[${i}] ✅ 받은 상태 내 순번 : ${payloadData.position} 총 대기 인원 : ${payloadData.totalWaiting}`);
+                    console.log(`[${i}] ✅ 나의 순번 : ${payloadData.position} 총 대기 인원: ${payloadData.totalWaiting}`);
                 },
                 onComplete: () => {
-                    console.log(`[${i}] 🎉 ${userId} 입장 완료 → ${leaveAfter}s 뒤 퇴장`);
-                    onComplete('success');
+                    // console.log(`[${i}] 🎉 ${userId} 입장 완료 → ${leaveAfter}s 뒤 퇴장`);
+                    onComplete('success'); // 입장 인원 카운팅
                     setTimeout(() => {
                         socket.close();
                     }, leaveAfter * 1000);

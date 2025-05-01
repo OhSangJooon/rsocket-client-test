@@ -1,29 +1,41 @@
 const { Worker } = require('worker_threads');
 
-const TOTAL_USERS = 1000; // 총 유저
-const USERS_PER_THREAD = 1; // 유저 별 스레드 수
-const THREAD_COUNT = TOTAL_USERS / USERS_PER_THREAD;
+const TOTAL_USERS = 3000;
+const USERS_PER_SECOND = 300;
+const INTERVAL_MS = 1000 / USERS_PER_SECOND;
 
 let stats = { success: 0, fail: 0 };
+let finished = 0;
+const startTime = Date.now();
 
-for (let i = 0; i < THREAD_COUNT; i++) {
-    const offset = i * USERS_PER_THREAD;
-    const worker = new Worker('./worker.js', {
-        workerData: { offset, count: USERS_PER_THREAD },
-    });
+for (let i = 0; i < TOTAL_USERS; i++) {
+    setTimeout(() => {
+        const worker = new Worker('./worker.js', {
+            workerData: { offset: i, count: 1 },
+        });
 
-    worker.on('message', msg => {
-        if (msg.type === 'success') stats.success++;
-        if (msg.type === 'fail') stats.fail++;
-    });
+        worker.on('message', msg => {
+            if (msg.type === 'success') stats.success++;
+            if (msg.type === 'fail') stats.fail++;
+            finished++;
 
-    worker.on('error', err => {
-        console.error('❌ 워커 에러 발생:', err);
-    });
+            if (finished === TOTAL_USERS) {
+                const endTime = Date.now();
+                const elapsedSec = ((endTime - startTime) / 1000).toFixed(2);
+                const successRate = ((stats.success / TOTAL_USERS) * 100).toFixed(2);
+                console.log(`\n✅ 테스트 완료: ${TOTAL_USERS}명`);
+                console.log(`⏱ 총 소요 시간: ${elapsedSec}초`);
+                console.log(`📊 평균 성공률: ${successRate}%`);
+                process.exit(0);
+            }
+        });
 
-    worker.on('exit', code => {
-        console.log(`✅ 워커 종료 (exit code: ${code})`);
-    });
+        worker.on('error', err => {
+            console.error(`❌ 워커 에러 발생 [${i}]:`, err);
+        });
+
+        worker.on('exit', () => {});
+    }, i * INTERVAL_MS);
 }
 
 setInterval(() => {
