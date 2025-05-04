@@ -4,6 +4,7 @@ node_modules/
 # IntelliJ project files
 .idea/
 *.iml
+./logs
 
 # Lockfile (선택: 공유 필요 없다면 제외)
 package-lock.json

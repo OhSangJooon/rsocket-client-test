@@ -1,0 +1,130 @@
+services:
+  tester1:
+    build: .
+    environment:
+      - WS_URL=${WS_URL}
+      - CLIENT_COUNT=3000
+      - CLIENT_START_INDEX=0
+    volumes:
+      - ./logs:/app/logs
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  tester2:
+    build: .
+    environment:
+      - WS_URL=${WS_URL}
+      - CLIENT_COUNT=3000
+      - CLIENT_START_INDEX=3000
+    volumes:
+      - ./logs:/app/logs
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  tester3:
+    build: .
+    environment:
+      - WS_URL=${WS_URL}
+      - CLIENT_COUNT=3000
+      - CLIENT_START_INDEX=6000
+    volumes:
+      - ./logs:/app/logs
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  tester4:
+    build: .
+    environment:
+      - WS_URL=${WS_URL}
+      - CLIENT_COUNT=3000
+      - CLIENT_START_INDEX=9000
+    volumes:
+      - ./logs:/app/logs
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  tester5:
+    build: .
+    environment:
+      - WS_URL=${WS_URL}
+      - CLIENT_COUNT=3000
+      - CLIENT_START_INDEX=12000
+    volumes:
+      - ./logs:/app/logs
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  tester6:
+    build: .
+    environment:
+      - WS_URL=${WS_URL}
+      - CLIENT_COUNT=3000
+      - CLIENT_START_INDEX=15000
+    volumes:
+      - ./logs:/app/logs
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  tester7:
+    build: .
+    environment:
+      - WS_URL=${WS_URL}
+      - CLIENT_COUNT=3000
+      - CLIENT_START_INDEX=18000
+    volumes:
+      - ./logs:/app/logs
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  tester8:
+    build: .
+    environment:
+      - WS_URL=${WS_URL}
+      - CLIENT_COUNT=3000
+      - CLIENT_START_INDEX=21000
+    volumes:
+      - ./logs:/app/logs
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  tester9:
+    build: .
+    environment:
+      - WS_URL=${WS_URL}
+      - CLIENT_COUNT=3000
+      - CLIENT_START_INDEX=24000
+    volumes:
+      - ./logs:/app/logs
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  tester10:
+    build: .
+    environment:
+      - WS_URL=${WS_URL}
+      - CLIENT_COUNT=3000
+      - CLIENT_START_INDEX=27000
+    volumes:
+      - ./logs:/app/logs
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
