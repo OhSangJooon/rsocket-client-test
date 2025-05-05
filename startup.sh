@@ -20,7 +20,7 @@ for i in {1..10}; do
   SERVICE="tester$i"
   echo "▶️ $SERVICE 실행 중..."
   docker-compose up --build -d $SERVICE
-  sleep 31
+  sleep 10
 done
 
 echo "⏳ 테스트 완료 대기 중..."

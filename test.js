@@ -1,3 +1,9 @@
+/*
+* 실행 전 사용가능 포트 늘리고 실행 필요 개인 로컬 PC마다 포트 제한이 걸려있어 최대 요청량이 제한됨
+* sysctl net.inet.ip.portrange.first
+* sysctl net.inet.ip.portrange.last
+* sudo sysctl -w net.inet.ip.portrange.first=10000
+* */
 global.WebSocket = require('ws');
 const fs = require('fs');
 const path = require('path');
@@ -91,7 +97,7 @@ function connectClient(i) {
                             setTimeout(() => {
                                 socket.close();
                                 resolve();
-                            }, leaveAfter * 1000);
+                            }, 30000); // 완료 이후 30초 뒤 소켓 제거
                         },
                     });
                 },
@@ -99,7 +105,7 @@ function connectClient(i) {
                     failCount++; total++;
                     log(`Connect error: ${error.message}`);
                     if (++retryCount <= MAX_RETRY) {
-                        setTimeout(attemptConnection, 5000);
+                        setTimeout(attemptConnection, 10000); // 재시도 10초에 한번씩 재시도 총 3회
                     } else {
                         log(`Fail: 연결 재시도 초과: ${userId}`);
                         resolve();
@@ -115,9 +121,9 @@ function connectClient(i) {
 (async () => {
     log(`🔥 테스트 시작: CLIENT_START_INDEX=${startIndex}, CLIENT_COUNT=${clientCount}`);
 
-    // TPS 100
+    // TPS 500
     const delayMs = 1000; // 1초 간격
-    const groupSize = 100; // 1초당 100명
+    const groupSize = 500; // 1초당 100명
     const groupCount = Math.ceil(clientCount / groupSize);
 
     const allTasks = [];

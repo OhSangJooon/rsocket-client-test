@@ -30,7 +30,7 @@ async function analyzeFile(filePath) {
     }
 
     console.log(`📊 테스트 결과`);
-    console.log(`✅ TPS : 100`);
+    console.log(`✅ TPS : 500`);
     console.log(`✔ 성공: ${success}`);
     console.log(`❌ 실패: ${fail}`);
     console.log(`📦 총 시도 수: ${total}`);
