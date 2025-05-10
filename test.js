@@ -43,6 +43,8 @@ function log(line) {
     logger.write(`[${new Date().toISOString()}] ${line}\n`);
 }
 
+const memberPositions = {}; // { memberId: true }
+
 function connectClient(i) {
     return new Promise((resolve) => {
         const userId = '11' + (startIndex + i).toString().padStart(6, '0');
@@ -83,7 +85,17 @@ function connectClient(i) {
                             subscribed = true;
                             sub.request(2147483647);
                         },
-                        onNext: () => {},
+                        onNext: () => {
+                            const payloadData = JSON.parse(payload.data.toString('utf8'));
+                            const memberId = payloadData.memberId;
+                            const position = payloadData.position;
+
+                            // 최초 1회만 로그 남김
+                            if (!memberPositions[memberId]) {
+                                memberPositions[memberId] = true;
+                                log(`memberId: ${memberId}, 순번: ${position}`);
+                            }
+                        },
                         onError: error => {
                             if (!subscribed) return; // onSubscribe 보장
                             failCount++; total++;
