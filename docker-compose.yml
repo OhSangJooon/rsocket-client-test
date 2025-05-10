@@ -3,8 +3,8 @@ services:
     build: .
     environment:
       - WS_URL=${WS_URL}
-      - CLIENT_COUNT=100
-      - CLIENT_START_INDEX=0
+      - CLIENT_COUNT=5
+      - CLIENT_START_INDEX=5
     volumes:
       - ./logs:/app/logs
     ulimits:
@@ -16,8 +16,8 @@ services:
     build: .
     environment:
       - WS_URL=${WS_URL}
-      - CLIENT_COUNT=100
-      - CLIENT_START_INDEX=100
+      - CLIENT_COUNT=5
+      - CLIENT_START_INDEX=10
     volumes:
       - ./logs:/app/logs
     ulimits:
@@ -29,8 +29,8 @@ services:
     build: .
     environment:
       - WS_URL=${WS_URL}
-      - CLIENT_COUNT=100
-      - CLIENT_START_INDEX=200
+      - CLIENT_COUNT=5
+      - CLIENT_START_INDEX=15
     volumes:
       - ./logs:/app/logs
     ulimits:
@@ -42,8 +42,8 @@ services:
     build: .
     environment:
       - WS_URL=${WS_URL}
-      - CLIENT_COUNT=100
-      - CLIENT_START_INDEX=300
+      - CLIENT_COUNT=5
+      - CLIENT_START_INDEX=20
     volumes:
       - ./logs:/app/logs
     ulimits:
@@ -55,76 +55,76 @@ services:
     build: .
     environment:
       - WS_URL=${WS_URL}
-      - CLIENT_COUNT=100
-      - CLIENT_START_INDEX=400
+      - CLIENT_COUNT=5
+      - CLIENT_START_INDEX=25
     volumes:
       - ./logs:/app/logs
     ulimits:
       nofile:
         soft: 65535
         hard: 65535
-#
-#  tester6:
-#    build: .
-#    environment:
-#      - WS_URL=${WS_URL}
-#      - CLIENT_COUNT=5000
-#      - CLIENT_START_INDEX=25000
-#    volumes:
-#      - ./logs:/app/logs
-#    ulimits:
-#      nofile:
-#        soft: 65535
-#        hard: 65535
-#
-#  tester7:
-#    build: .
-#    environment:
-#      - WS_URL=${WS_URL}
-#      - CLIENT_COUNT=5000
-#      - CLIENT_START_INDEX=30000
-#    volumes:
-#      - ./logs:/app/logs
-#    ulimits:
-#      nofile:
-#        soft: 65535
-#        hard: 65535
-#
-#  tester8:
-#    build: .
-#    environment:
-#      - WS_URL=${WS_URL}
-#      - CLIENT_COUNT=5000
-#      - CLIENT_START_INDEX=35000
-#    volumes:
-#      - ./logs:/app/logs
-#    ulimits:
-#      nofile:
-#        soft: 65535
-#        hard: 65535
-#
-#  tester9:
-#    build: .
-#    environment:
-#      - WS_URL=${WS_URL}
-#      - CLIENT_COUNT=5000
-#      - CLIENT_START_INDEX=40000
-#    volumes:
-#      - ./logs:/app/logs
-#    ulimits:
-#      nofile:
-#        soft: 65535
-#        hard: 65535
-#
-#  tester10:
-#    build: .
-#    environment:
-#      - WS_URL=${WS_URL}
-#      - CLIENT_COUNT=5000
-#      - CLIENT_START_INDEX=45000
-#    volumes:
-#      - ./logs:/app/logs
-#    ulimits:
-#      nofile:
-#        soft: 65535
-#        hard: 65535
+
+  tester6:
+    build: .
+    environment:
+      - WS_URL=${WS_URL}
+      - CLIENT_COUNT=5
+      - CLIENT_START_INDEX=30
+    volumes:
+      - ./logs:/app/logs
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  tester7:
+    build: .
+    environment:
+      - WS_URL=${WS_URL}
+      - CLIENT_COUNT=5
+      - CLIENT_START_INDEX=35
+    volumes:
+      - ./logs:/app/logs
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  tester8:
+    build: .
+    environment:
+      - WS_URL=${WS_URL}
+      - CLIENT_COUNT=5
+      - CLIENT_START_INDEX=40
+    volumes:
+      - ./logs:/app/logs
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  tester9:
+    build: .
+    environment:
+      - WS_URL=${WS_URL}
+      - CLIENT_COUNT=5
+      - CLIENT_START_INDEX=45
+    volumes:
+      - ./logs:/app/logs
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  tester10:
+    build: .
+    environment:
+      - WS_URL=${WS_URL}
+      - CLIENT_COUNT=5
+      - CLIENT_START_INDEX=50
+    volumes:
+      - ./logs:/app/logs
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
