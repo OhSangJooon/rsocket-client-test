@@ -20,7 +20,7 @@ const ROUTE = 'queue.test';
 const JWT_TOKEN = 'test';
 const CHANNEL = 'GOLF_FIRST_COME';
 const MAX_RETRY = 3;
-const getRandomLeaveSeconds = () => Math.floor(Math.random() * (40 - 30 + 1)) + 40;
+const getRandomLeaveSeconds = () => Math.floor(Math.random() * (20 - 10 + 1)) + 20;
 
 // ===================== 📦 전역 상태 저장 =====================
 const memberPositions = {}; // { memberId: { first: number, latest: number } }
