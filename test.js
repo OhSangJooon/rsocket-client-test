@@ -27,10 +27,18 @@ const WS_URL = process.env.WS_URL || 'ws://host.docker.internal:7010/rsocket';
 // const WS_URL = process.env.WS_URL || 'ws://192.168.0.31:7010/rsocket';
 const ROUTE = 'queue.test';
 const JWT_TOKEN = 'test';
-const CHANNEL = 'GOLF_FIRST_COME';
-const MAX_RETRY = 3;
+const MAX_RETRY = 10;
 
-const getRandomLeaveSeconds = () => Math.floor(Math.random() * (30 - 10 + 1)) + 10;
+const CHANNELS = [
+    { channel: 'GOLF_FIRST_COME', facilityId: '34' },
+    { channel: 'GOLF_TIMETABLE', facilityId: '35' },
+    { channel: 'SEAT', facilityId: '44' },
+    { channel: 'LOCKER', facilityId: '54' },
+    { channel: 'GUEST_ROOM', facilityId: '64' },
+    { channel: 'PRIVATE_ROOM', facilityId: '74' },
+];
+
+const getRandomLeaveSeconds = () => Math.floor(Math.random() * (40 - 10 + 1)) + 10; // 40초 안에 퇴장
 
 const logDir = path.join(__dirname, 'logs');
 if (!fs.existsSync(logDir)) fs.mkdirSync(logDir);
@@ -49,7 +57,9 @@ function connectClient(i) {
     return new Promise((resolve) => {
         const userId = '11' + (startIndex + i).toString().padStart(6, '0');
         const leaveAfter = getRandomLeaveSeconds();
-        const data = { memberId: userId, channel: CHANNEL, facilityId: '34', aptId: '1100000001' };
+
+        const { channel, facilityId } = CHANNELS[Math.floor(Math.random() * CHANNELS.length)];
+        const data = { memberId: userId, channel, facilityId, aptId: '1100000001' };
 
         const authMetadataBuffer = encodeBearerAuthMetadata(JWT_TOKEN);
         const routeMetadataBuffer = encodeRoute(ROUTE);
@@ -62,6 +72,32 @@ function connectClient(i) {
 
         const dataPayload = Buffer.from(JSON.stringify(data));
         let retryCount = 0;
+        let heartbeatInterval = null;
+
+        function sendHeartbeat(socket) {
+            const heartbeatRoute = encodeRoute("queue.test-heart-beat");
+            const heartbeatMetadata = encodeCompositeMetadata([
+                [WellKnownMimeType.MESSAGE_RSOCKET_AUTHENTICATION, authMetadataBuffer],
+                [WellKnownMimeType.MESSAGE_RSOCKET_ROUTING, heartbeatRoute],
+            ]);
+
+            socket.fireAndForget({
+                data: Buffer.from(JSON.stringify(data)),
+                metadata: heartbeatMetadata,
+            });
+        }
+
+        function startHeartbeat(socket) {
+            sendHeartbeat(socket);
+            heartbeatInterval = setInterval(() => sendHeartbeat(socket), 180000); // 3분
+        }
+
+        function stopHeartbeat() {
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+                heartbeatInterval = null;
+            }
+        }
 
         function attemptConnection() {
             const client = new RSocketClient({
@@ -69,8 +105,8 @@ function connectClient(i) {
                 setup: {
                     dataMimeType: 'application/json',
                     metadataMimeType: 'message/x.rsocket.composite-metadata.v0',
-                    keepAlive: 180_000,
-                    lifetime: 600_000,
+                    keepAlive: 300_000,
+                    lifetime: 800_000,
                     payload: { data: null, metadata: setupMetadata },
                     serializers: { data: JsonSerializer, metadata: IdentitySerializer },
                 },
@@ -85,7 +121,7 @@ function connectClient(i) {
                             subscribed = true;
                             sub.request(2147483647);
                         },
-                        onNext: () => {
+                        onNext: payload => {
                             const payloadData = JSON.parse(payload.data.toString('utf8'));
                             const memberId = payloadData.memberId;
                             const position = payloadData.position;
@@ -93,7 +129,7 @@ function connectClient(i) {
                             // 최초 1회만 로그 남김
                             if (!memberPositions[memberId]) {
                                 memberPositions[memberId] = true;
-                                log(`memberId: ${memberId}, 순번: ${position}`);
+                                log(`memberId: ${memberId}, 순번: ${position}, channel: ${channel}, facilityId: ${facilityId}`);
                             }
                         },
                         onError: error => {
@@ -109,9 +145,36 @@ function connectClient(i) {
                             setTimeout(() => {
                                 socket.close();
                                 resolve();
-                            }, 30000); // 완료 이후 30초 뒤 소켓 제거
+                            }, leaveAfter * 1000); // 완료 이후 10~40초 뒤 소켓 제거
                         },
                     });
+
+                    socket.connectionStatus().subscribe({
+                        onSubscribe: sub => sub.request(2147483647),
+                        onNext: status => {
+                            if (status.kind === 'ERROR') {
+                                log(`❌ 연결 끊김: ${userId}`);
+                                stopHeartbeat();
+                                if (++retryCount < MAX_RETRY) {
+                                    setTimeout(attemptConnection, 10000);
+                                } else {
+                                    log(`❌ 재시도 초과: ${userId}`);
+                                    socket.close();
+                                    resolve();
+                                }
+                            } else if (status.kind === 'CLOSED') {
+                                log(`🔌 소켓 닫힘: ${userId}`);
+                                stopHeartbeat();
+                                socket.close();
+                            }
+                        },
+                        onError: error => {
+                            log(`❌ 상태 감시 오류: ${error.message}`);
+                        },
+                    });
+
+                    startHeartbeat(socket); // ✅ 연결 성공 시 하트비트 시작
+
                 },
                 onError: error => {
                     failCount++; total++;
