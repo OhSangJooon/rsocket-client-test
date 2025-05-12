@@ -29,13 +29,20 @@ const ROUTE = 'queue.test';
 const JWT_TOKEN = 'test';
 const MAX_RETRY = 10;
 
+
 const CHANNELS = [
     { channel: 'GOLF_FIRST_COME', facilityId: '34' },
+    { channel: 'GOLF_FIRST_COME', facilityId: '33' },
     { channel: 'GOLF_TIMETABLE', facilityId: '35' },
+    { channel: 'GOLF_TIMETABLE', facilityId: '36' },
     { channel: 'SEAT', facilityId: '44' },
+    { channel: 'SEAT', facilityId: '45' },
     { channel: 'LOCKER', facilityId: '54' },
+    { channel: 'LOCKER', facilityId: '55' },
     { channel: 'GUEST_ROOM', facilityId: '64' },
+    { channel: 'GUEST_ROOM', facilityId: '65' },
     { channel: 'PRIVATE_ROOM', facilityId: '74' },
+    { channel: 'PRIVATE_ROOM', facilityId: '75' },
 ];
 
 const getRandomLeaveSeconds = () => Math.floor(Math.random() * (40 - 10 + 1)) + 10; // 40초 안에 퇴장
@@ -158,18 +165,17 @@ function connectClient(i) {
                                 if (++retryCount < MAX_RETRY) {
                                     setTimeout(attemptConnection, 10000);
                                 } else {
-                                    log(`❌ 재시도 초과: ${userId}`);
+                                    log(`❌Fail: 재시도 초과: ${userId}`);
                                     socket.close();
                                     resolve();
                                 }
                             } else if (status.kind === 'CLOSED') {
-                                log(`🔌 소켓 닫힘: ${userId}`);
                                 stopHeartbeat();
                                 socket.close();
                             }
                         },
                         onError: error => {
-                            log(`❌ 상태 감시 오류: ${error.message}`);
+                            log(`❌Fail: 상태 감시 오류: ${error.message}`);
                         },
                     });
 
@@ -198,7 +204,7 @@ function connectClient(i) {
 
     // TPS 500
     const delayMs = 1000; // 1초 간격
-    const groupSize = 500; // 1초당 100명
+    const groupSize = 150; // 1초당 150명
     const groupCount = Math.ceil(clientCount / groupSize);
 
     const allTasks = [];
