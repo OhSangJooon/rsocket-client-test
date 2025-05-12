@@ -154,7 +154,6 @@ function connectClient(i) {
                         onSubscribe: sub => sub.request(2147483647),
                         onNext: status => {
                             if (status.kind === 'ERROR') {
-                                log(`❌ 연결 끊김: ${userId}`);
                                 stopHeartbeat();
                                 if (++retryCount < MAX_RETRY) {
                                     setTimeout(attemptConnection, 10000);
@@ -179,7 +178,6 @@ function connectClient(i) {
                 },
                 onError: error => {
                     failCount++; total++;
-                    log(`Connect error: ${error.message}`);
                     if (++retryCount <= MAX_RETRY) {
                         setTimeout(attemptConnection, 10000); // 재시도 10초에 한번씩 재시도 총 3회
                     } else {
@@ -198,8 +196,8 @@ function connectClient(i) {
     log(`🔥 테스트 시작: CLIENT_START_INDEX=${startIndex}, CLIENT_COUNT=${clientCount}`);
 
     // TPS 500
-    const delayMs = 1000; // 1초 간격
-    const groupSize = 150; // 1초당 150명
+    const delayMs = 2000; // 2초 간격
+    const groupSize = 100; // 1초당 100명
     const groupCount = Math.ceil(clientCount / groupSize);
 
     const allTasks = [];
