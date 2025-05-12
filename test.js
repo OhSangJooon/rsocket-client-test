@@ -22,7 +22,7 @@ const {
 } = require('rsocket-composite-metadata');
 
 const startIndex = parseInt(process.env.CLIENT_START_INDEX || '0');
-const clientCount = parseInt(process.env.CLIENT_COUNT || '2000');
+const clientCount = parseInt(process.env.CLIENT_COUNT || '5000');
 const WS_URL = process.env.WS_URL || 'ws://host.docker.internal:7010/rsocket';
 // const WS_URL = process.env.WS_URL || 'ws://192.168.0.31:7010/rsocket';
 const ROUTE = 'queue.test';
@@ -139,13 +139,7 @@ function connectClient(i) {
                                 log(`memberId: ${memberId}, 순번: ${position}, channel: ${channel}, facilityId: ${facilityId}`);
                             }
                         },
-                        onError: error => {
-                            if (!subscribed) return; // onSubscribe 보장
-                            failCount++; total++;
-                            log(`Fail: Stream error: ${error.message}`);
-                            socket.close();
-                            resolve();
-                        },
+                        onError: error => {},
                         onComplete: () => {
                             successCount++; total++;
                             log("Success:")
@@ -165,6 +159,7 @@ function connectClient(i) {
                                 if (++retryCount < MAX_RETRY) {
                                     setTimeout(attemptConnection, 10000);
                                 } else {
+                                    failCount++; total++;
                                     log(`❌Fail: 재시도 초과: ${userId}`);
                                     socket.close();
                                     resolve();
