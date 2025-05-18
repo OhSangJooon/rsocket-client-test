@@ -134,10 +134,10 @@ function connectClient(i) {
                             const position = payloadData.position;
 
                             // 최초 1회만 로그 남김
-                            if (!memberPositions[memberId]) {
-                                memberPositions[memberId] = true;
-                                log(`memberId: ${memberId}, 순번: ${position}, channel: ${channel}, facilityId: ${facilityId}`);
-                            }
+                            // if (!memberPositions[memberId]) {
+                            //     memberPositions[memberId] = true;
+                            //     log(`memberId: ${memberId}, 순번: ${position}, channel: ${channel}, facilityId: ${facilityId}`);
+                            // }
                         },
                         onError: error => {},
                         onComplete: () => {
@@ -156,6 +156,7 @@ function connectClient(i) {
                             if (status.kind === 'ERROR') {
                                 stopHeartbeat();
                                 if (++retryCount < MAX_RETRY) {
+                                    log(`재시도 함: ${userId}`);
                                     setTimeout(attemptConnection, 10000);
                                 } else {
                                     failCount++; total++;
@@ -195,9 +196,9 @@ function connectClient(i) {
 (async () => {
     log(`🔥 테스트 시작: CLIENT_START_INDEX=${startIndex}, CLIENT_COUNT=${clientCount}`);
 
-    // TPS 500
-    const delayMs = 2000; // 2초 간격
-    const groupSize = 100; // 1초당 100명
+    // 실제 TPS 250
+    const delayMs = 1000;
+    const groupSize = 1000;
     const groupCount = Math.ceil(clientCount / groupSize);
 
     const allTasks = [];
@@ -206,7 +207,7 @@ function connectClient(i) {
         const start = g * groupSize;
         const end = Math.min((g + 1) * groupSize, clientCount);
 
-        await new Promise(resolve => setTimeout(resolve, delayMs)); // 1초 대기
+        await new Promise(resolve => setTimeout(resolve, delayMs));
 
         const groupTasks = [];
         for (let i = start; i < end; i++) {
