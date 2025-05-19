@@ -32,20 +32,20 @@ const MAX_RETRY = 10;
 
 const CHANNELS = [
     { channel: 'GOLF_FIRST_COME', facilityId: '34' },
-    { channel: 'GOLF_FIRST_COME', facilityId: '33' },
-    { channel: 'GOLF_TIMETABLE', facilityId: '35' },
-    { channel: 'GOLF_TIMETABLE', facilityId: '36' },
-    { channel: 'SEAT', facilityId: '44' },
-    { channel: 'SEAT', facilityId: '45' },
-    { channel: 'LOCKER', facilityId: '54' },
-    { channel: 'LOCKER', facilityId: '55' },
-    { channel: 'GUEST_ROOM', facilityId: '64' },
-    { channel: 'GUEST_ROOM', facilityId: '65' },
-    { channel: 'PRIVATE_ROOM', facilityId: '74' },
-    { channel: 'PRIVATE_ROOM', facilityId: '75' },
+    // { channel: 'GOLF_FIRST_COME', facilityId: '33' },
+    // { channel: 'GOLF_TIMETABLE', facilityId: '35' },
+    // { channel: 'GOLF_TIMETABLE', facilityId: '36' },
+    // { channel: 'SEAT', facilityId: '44' },
+    // { channel: 'SEAT', facilityId: '45' },
+    // { channel: 'LOCKER', facilityId: '54' },
+    // { channel: 'LOCKER', facilityId: '55' },
+    // { channel: 'GUEST_ROOM', facilityId: '64' },
+    // { channel: 'GUEST_ROOM', facilityId: '65' },
+    // { channel: 'PRIVATE_ROOM', facilityId: '74' },
+    // { channel: 'PRIVATE_ROOM', facilityId: '75' },
 ];
 
-const getRandomLeaveSeconds = () => Math.floor(Math.random() * (40 - 10 + 1)) + 10; // 40초 안에 퇴장
+const getRandomLeaveSeconds = () => Math.floor(Math.random() * (50 - 10 + 1)) + 10; // 40초 안에 퇴장
 
 const logDir = path.join(__dirname, 'logs');
 if (!fs.existsSync(logDir)) fs.mkdirSync(logDir);
@@ -62,7 +62,8 @@ const memberPositions = {}; // { memberId: true }
 
 function connectClient(i) {
     return new Promise((resolve) => {
-        const userId = '11' + (startIndex + i).toString().padStart(6, '0');
+        // 테스트하는 피씨마다 다르게 설정 필요
+        const userId = '13' + (startIndex + i).toString().padStart(6, '0');
         const leaveAfter = getRandomLeaveSeconds();
 
         const { channel, facilityId } = CHANNELS[Math.floor(Math.random() * CHANNELS.length)];
@@ -113,7 +114,7 @@ function connectClient(i) {
                     dataMimeType: 'application/json',
                     metadataMimeType: 'message/x.rsocket.composite-metadata.v0',
                     keepAlive: 300_000,
-                    lifetime: 800_000,
+                    lifetime: 720_000,
                     payload: { data: null, metadata: setupMetadata },
                     serializers: { data: JsonSerializer, metadata: IdentitySerializer },
                 },
@@ -142,8 +143,8 @@ function connectClient(i) {
                         onError: error => {},
                         onComplete: () => {
                             successCount++; total++;
-                            log("Success:")
                             setTimeout(() => {
+                                log("Success:")
                                 socket.close();
                                 resolve();
                             }, leaveAfter * 1000); // 완료 이후 10~40초 뒤 소켓 제거
@@ -196,7 +197,6 @@ function connectClient(i) {
 (async () => {
     log(`🔥 테스트 시작: CLIENT_START_INDEX=${startIndex}, CLIENT_COUNT=${clientCount}`);
 
-    // 실제 TPS 250
     const delayMs = 1000;
     const groupSize = 1000;
     const groupCount = Math.ceil(clientCount / groupSize);
