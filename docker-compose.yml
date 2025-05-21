@@ -3,7 +3,7 @@ services:
     build: .
     environment:
       - WS_URL=${WS_URL}
-      - CLIENT_COUNT=10000
+      - CLIENT_COUNT=5000
       - CLIENT_START_INDEX=0
     volumes:
       - ./logs:/app/logs
@@ -16,8 +16,8 @@ services:
     build: .
     environment:
       - WS_URL=${WS_URL}
-      - CLIENT_COUNT=10000
-      - CLIENT_START_INDEX=10000
+      - CLIENT_COUNT=5000
+      - CLIENT_START_INDEX=5000
     volumes:
       - ./logs:/app/logs
     ulimits:
@@ -29,8 +29,8 @@ services:
     build: .
     environment:
       - WS_URL=${WS_URL}
-      - CLIENT_COUNT=10000
-      - CLIENT_START_INDEX=20000
+      - CLIENT_COUNT=5000
+      - CLIENT_START_INDEX=10000
     volumes:
       - ./logs:/app/logs
     ulimits:
@@ -42,8 +42,8 @@ services:
     build: .
     environment:
       - WS_URL=${WS_URL}
-      - CLIENT_COUNT=10000
-      - CLIENT_START_INDEX=30000
+      - CLIENT_COUNT=5000
+      - CLIENT_START_INDEX=15000
     volumes:
       - ./logs:/app/logs
     ulimits:
@@ -55,8 +55,8 @@ services:
     build: .
     environment:
       - WS_URL=${WS_URL}
-      - CLIENT_COUNT=10000
-      - CLIENT_START_INDEX=40000
+      - CLIENT_COUNT=5000
+      - CLIENT_START_INDEX=20000
     volumes:
       - ./logs:/app/logs
     ulimits:
@@ -68,8 +68,8 @@ services:
     build: .
     environment:
       - WS_URL=${WS_URL}
-      - CLIENT_COUNT=10000
-      - CLIENT_START_INDEX=50000
+      - CLIENT_COUNT=5000
+      - CLIENT_START_INDEX=25000
     volumes:
       - ./logs:/app/logs
     ulimits:
@@ -81,8 +81,8 @@ services:
     build: .
     environment:
       - WS_URL=${WS_URL}
-      - CLIENT_COUNT=10000
-      - CLIENT_START_INDEX=60000
+      - CLIENT_COUNT=5000
+      - CLIENT_START_INDEX=30000
     volumes:
       - ./logs:/app/logs
     ulimits:
@@ -94,8 +94,8 @@ services:
     build: .
     environment:
       - WS_URL=${WS_URL}
-      - CLIENT_COUNT=10000
-      - CLIENT_START_INDEX=70000
+      - CLIENT_COUNT=5000
+      - CLIENT_START_INDEX=35000
     volumes:
       - ./logs:/app/logs
     ulimits:
@@ -107,8 +107,8 @@ services:
     build: .
     environment:
       - WS_URL=${WS_URL}
-      - CLIENT_COUNT=10000
-      - CLIENT_START_INDEX=80000
+      - CLIENT_COUNT=5000
+      - CLIENT_START_INDEX=40000
     volumes:
       - ./logs:/app/logs
     ulimits:
@@ -120,8 +120,8 @@ services:
     build: .
     environment:
       - WS_URL=${WS_URL}
-      - CLIENT_COUNT=10000
-      - CLIENT_START_INDEX=90000
+      - CLIENT_COUNT=5000
+      - CLIENT_START_INDEX=45000
     volumes:
       - ./logs:/app/logs
     ulimits:
