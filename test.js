@@ -1,6 +1,6 @@
 /*
 * 실행 전 사용가능 포트 늘리고 실행 필요 개인 로컬 PC마다 포트 제한이 걸려있어 최대 요청량이 제한됨
-* sysctl net.inet.ip.portrange.first
+* sysctl net.inet.ip.portrange.first 기본 : 49152
 * sysctl net.inet.ip.portrange.last
 * sudo sysctl -w net.inet.ip.portrange.first=10000
 * */
@@ -23,7 +23,7 @@ const {
 
 const startIndex = parseInt(process.env.CLIENT_START_INDEX || '0');
 const clientCount = parseInt(process.env.CLIENT_COUNT || '5000');
-const WS_URL = process.env.WS_URL || 'ws://host.docker.internal:7010/rsocket';
+const WS_URL = process.env.WS_URL || 'wss://queue.pass-dev-aptner.com/rsocket';
 // const WS_URL = process.env.WS_URL || 'ws://192.168.0.31:7010/rsocket';
 const ROUTE = 'queue.test';
 const JWT_TOKEN = 'test';
@@ -64,7 +64,8 @@ function connectClient(i) {
     return new Promise((resolve) => {
         // 테스트하는 피씨마다 다르게 설정 필요
         const userId = '13' + (startIndex + i).toString().padStart(6, '0');
-        const leaveAfter = getRandomLeaveSeconds();
+        // const leaveAfter = getRandomLeaveSeconds();
+        const leaveAfter = 60;
 
         const { channel, facilityId } = CHANNELS[Math.floor(Math.random() * CHANNELS.length)];
         const data = { memberId: userId, channel, facilityId, aptId: '1100000001' };
@@ -97,7 +98,7 @@ function connectClient(i) {
 
         function startHeartbeat(socket) {
             sendHeartbeat(socket);
-            heartbeatInterval = setInterval(() => sendHeartbeat(socket), 180000); // 3분
+            heartbeatInterval = setInterval(() => sendHeartbeat(socket), 20000); // 20초
         }
 
         function stopHeartbeat() {
@@ -135,19 +136,19 @@ function connectClient(i) {
                             const position = payloadData.position;
 
                             // 최초 1회만 로그 남김
-                            // if (!memberPositions[memberId]) {
-                            //     memberPositions[memberId] = true;
-                            //     log(`memberId: ${memberId}, 순번: ${position}, channel: ${channel}, facilityId: ${facilityId}`);
-                            // }
+                            if (!memberPositions[memberId]) {
+                                memberPositions[memberId] = true;
+                                log(`WaitNumber: memberId: ${memberId}, 순번: ${position}`);
+                            }
                         },
                         onError: error => {},
                         onComplete: () => {
                             successCount++; total++;
                             setTimeout(() => {
-                                log("Success:")
+                                log("Success:");
                                 socket.close();
                                 resolve();
-                            }, leaveAfter * 1000); // 완료 이후 10~40초 뒤 소켓 제거
+                            }, leaveAfter * 1000); // 완료 이후 60초 뒤 소켓 제거
                         },
                     });
 
@@ -168,6 +169,7 @@ function connectClient(i) {
                             } else if (status.kind === 'CLOSED') {
                                 stopHeartbeat();
                                 socket.close();
+                                resolve();
                             }
                         },
                         onError: error => {
@@ -195,30 +197,42 @@ function connectClient(i) {
 }
 
 (async () => {
+    // 테스트 시작 로그 출력
     log(`🔥 테스트 시작: CLIENT_START_INDEX=${startIndex}, CLIENT_COUNT=${clientCount}`);
 
-    const delayMs = 1000;
-    const groupSize = 1000;
-    const groupCount = Math.ceil(clientCount / groupSize);
+    const delayMs = 1000; // 각 그룹 간의 실행 지연 (1초)
+    const groupSize = 1000; // 한 번에 몇 개의 클라이언트를 생성할 것인지
+    const groupCount = Math.ceil(clientCount / groupSize); // 전체 그룹 수 계산
 
-    const allTasks = [];
+    const allTasks = []; // 모든 클라이언트의 Promise들을 담을 배열
 
+    // 클라이언트를 그룹 단위로 나눠서 실행
     for (let g = 0; g < groupCount; g++) {
         const start = g * groupSize;
         const end = Math.min((g + 1) * groupSize, clientCount);
 
+        // 그룹 간 1초 지연 (TPS가 갑자기 몰리는 걸 방지하기 위해)
         await new Promise(resolve => setTimeout(resolve, delayMs));
 
         const groupTasks = [];
         for (let i = start; i < end; i++) {
+            // 클라이언트 생성 및 연결 시도
             groupTasks.push(connectClient(i));
         }
+
+        // 해당 그룹의 모든 클라이언트 작업들을 전체 작업 배열에 추가
         allTasks.push(...groupTasks);
     }
 
+    // 모든 클라이언트 작업들이 끝날 때까지 대기
     await Promise.all(allTasks);
 
+    // 최종 로그 출력
     log(`✅ DONE - Success: ${successCount}, Fail: ${failCount}, Total: ${total}`);
+
+    // 로그 스트림 종료
     logger.end();
+
+    // 스크립트 종료
     process.exit(0);
 })();
