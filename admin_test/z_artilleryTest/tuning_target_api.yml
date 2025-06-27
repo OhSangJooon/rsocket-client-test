@@ -9,30 +9,30 @@ config:
   phases:
     - name: "READ 튜닝 대상 API"
       duration: 60 # 초 동안 실행을 하겠다.
-      arrivalRate: 100 # 초당 N명의 사용자가 API 호출
+      arrivalRate: 300 # 초당 N명의 사용자가 API 호출
   #      rampTo: 20 # N 초에 걸쳐 얼마나 증가
 
   defaults:
     headers:
       User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
       Accept: "application/json, text/plain, */*"
-      Authorization: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0OSIsImlzcyI6InBhc3MtYXV0aCIsImlhdCI6MTc1MTAwNTI1NSwiZXhwIjoxNzUxMDQ4NDU1LCJhcHRuZXItcGFzcy1hdXRoLW1ldGhvZCI6IlNUQUZGX0lEIiwiYXB0bmVyLXBhc3MtZG9tYWluIjoiQURNSU4iLCJjbGllbnQtaXAiOiIxMjcuMC4wLjEiLCJqdGkiOiIxNSJ9.1uc1EYB-qm73JWm3zZO68toDvLEaAvkdggK74lHVukk"
-#      Authorization: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MTAiLCJpc3MiOiJwYXNzLWF1dGgiLCJpYXQiOjE3NTEwMDI1MjYsImV4cCI6MTc1MTAwNjEyNiwiYXB0bmVyLXBhc3MtYXV0aC1tZXRob2QiOiJTVEFGRl9JRCIsImFwdG5lci1wYXNzLWRvbWFpbiI6IkFETUlOIiwiY2xpZW50LWlwIjoiMDowOjA6MDowOjA6MDoxIiwianRpIjoiMTYifQ.79ke7EDoBoPuZUCg7Ib9kNaDiHKIzpp_zY_XwmGA4XI"
+      Authorization: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0OSIsImlzcyI6InBhc3MtYXV0aCIsImlhdCI6MTc1MTAxMjA5NSwiZXhwIjoxNzUxMDU1Mjk1LCJhcHRuZXItcGFzcy1hdXRoLW1ldGhvZCI6IlNUQUZGX0lEIiwiYXB0bmVyLXBhc3MtZG9tYWluIjoiQURNSU4iLCJjbGllbnQtaXAiOiIxMjcuMC4wLjEiLCJqdGkiOiIxNSJ9.aK9Mb_we2iWXwr_F39oORGLYO3h1ENagyOoX7nT_dEk"
+#      Authorization: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MTAiLCJpc3MiOiJwYXNzLWF1dGgiLCJpYXQiOjE3NTEwMDYyMTksImV4cCI6MTc1MTAwOTgxOSwiYXB0bmVyLXBhc3MtYXV0aC1tZXRob2QiOiJTVEFGRl9JRCIsImFwdG5lci1wYXNzLWRvbWFpbiI6IkFETUlOIiwiY2xpZW50LWlwIjoiMDowOjA6MDowOjA6MDoxIiwianRpIjoiMTYifQ.4TwgMSLeE7hdIU0xxj07qY5Xkr3U9p6N_y5xbSrAx0E"
       Content-Type: "application/json"
       aptner-pass-apt-id: "1100000001"
 
 scenarios:
   - name: READ 튜닝 대상 API
     flow:
-      - post:
-          url: "/member/use/ticket/program-ticket/search" # 회원 구매가능한 정기/기간 이용권 검색
-          json:
-            searchYearMonth: "2025-06"
-            memberId: 1100000070
-            pagination:
-              page: 1
-              size: 20
-              isTotalNeeded: true
+#      - post:
+#          url: "/member/use/ticket/program-ticket/search" # 회원 구매가능한 정기/기간 이용권 검색
+#          json:
+#            searchYearMonth: "2025-06"
+#            memberId: 1100000070
+#            pagination:
+#              page: 1
+#              size: 20
+#              isTotalNeeded: true
 #      - post:
 #          url: "/member/use/ticket/own/list/get" # 이용권 보유 조회
 #          json:
@@ -49,17 +49,17 @@ scenarios:
 #            cancelReasonType: null
 #            paymentMethod: "ALL"
 #            salesSearchMethod: "SALES_DATE"
-#            from: "2025-01-01"
-#            to: "2025-12-31"
+#            from: "2025-06-01"
+#            to: "2025-07-01"
 #            pagination:
 #              page: 1
 #              size: 50
 #              isTotalNeeded: true
-#      - post:
-#          url: "/operation-time-override/surcharge-date/search" # 할증일 목록 조회
-#          json:
-#            from: "2025-06-01"
-#            to: "2025-07-05"
+      - post:
+          url: "/operation-time-override/surcharge-date/search" # 할증일 목록 조회
+          json:
+            from: "2025-06-01"
+            to: "2025-07-05"
 #      - post:
 #          url: "/facility/info/search" # 시설 목록 검색
 #          json:
